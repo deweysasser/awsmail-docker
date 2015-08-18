@@ -12,8 +12,8 @@ ENV NETWORKS 127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16
 ENV ID "put your aws ID here"
 ENV KEY "put your aws secret here"
 
-# This is a from address used when there is no valid one
-ENV FROM "root@example.com"
+# Add a domain when none exists
+ENV DOMAIN example.com
 
 # We'll default to the us-east mail endpoint.  Feel free to substitute your own
 ENV SES_ENDPOINT email-smtp.us-east-1.amazonaws.com
@@ -46,8 +46,9 @@ RUN postconf -e 'smtp_tls_note_starttls_offer = yes'
 RUN postconf -e 'smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt'
 
 EXPOSE 25
+VOLUME /var/spool/postfix
 
 COPY run /root/run
-CMD /root/run
+ENTRYPOINT ["/root/run"]
 
 

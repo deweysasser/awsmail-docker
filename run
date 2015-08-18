@@ -8,23 +8,15 @@ set -u
 hostname > /etc/mailname
 
 postconf -e "myhostname = `hostname`"
-postconf -e "mynetworks = ENV_NETWORKS"
+postconf -e "mynetworks = $NETWORKS"
+postconf -e "append_dot_mydomain = $DOMAIN"
+postconf -e "remote_header_rewrite_domain = $DOMAIN"
 
-RUN postconf -e 'relayhost = $(SES_ENDPOINT):587'
-echo "$(SES_ENDPOINT):587 $ID:$KEY" > /etc/postfix/sasl-passwords
+postconf -e "relayhost = $SES_ENDPOINT:587"
+echo "$SES_ENDPOINT:587 $ID:$KEY" > /etc/postfix/sasl-passwords
 postmap hash:/etc/postfix/sasl-passwords
 
-if [ -n "${FROM:-}" ] ; then
-    echo "/.*/ $FROM" > /etc/postfix/generic
-    postmap hash:/etc/postfix/generic
-    postconf -e 'smtp_generic_maps = hash:/etc/postfix/generic'
-    postconf -e 'canonical_maps = regexp:/etc/postfix/generic'
-    postconf -e 'canonical_classes = envelope_sender'
-fi
-
-# Do we need to configure arbitrary files?
-#perl -i -p -e 's/ENV_(\w)+/$ENV{$1}/g' 
-
+# Various services needed
 service rsyslog start
 service cron start
 service postfix start
@@ -33,7 +25,8 @@ if [ -n "$*" ] ; then
     eval "$@"
 else
     # Run forever
-    while sleep 100d;  do
-	true
+    while true;
+      do 
+	sleep 100d
     done
 fi
