@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Purpose:  configure and run the amazon mail setup
+
+set -e
+set -u
+
+hostname > /etc/mailname
+
+postconf -e "myhostname = `hostname`"
+postconf -e "mynetworks = ENV_NETWORKS"
+
+RUN postconf -e 'relayhost = $(SES_ENDPOINT):587'
+echo "$(SES_ENDPOINT):587 $ID:$KEY" > /etc/postfix/sasl-passwords
+postmap hash:/etc/postfix/sasl-passwords
+
+if [ -n "${FROM:-}" ] ; then
+    echo "/.*/ $FROM" > /etc/postfix/generic
+    postmap hash:/etc/postfix/generic
+    postconf -e 'smtp_generic_maps = hash:/etc/postfix/generic'
+    postconf -e 'canonical_maps = regexp:/etc/postfix/generic'
+    postconf -e 'canonical_classes = envelope_sender'
+fi
+
+# Do we need to configure arbitrary files?
+#perl -i -p -e 's/ENV_(\w)+/$ENV{$1}/g' 
+
+service rsyslog start
+service cron start
+service postfix start
+
+if [ -n "$*" ] ; then
+    eval "$@"
+else
+    # Run forever
+    while sleep 100d;  do
+	true
+    done
+fi

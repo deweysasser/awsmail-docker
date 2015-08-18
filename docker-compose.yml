@@ -1,0 +1,6 @@
+mailtest:
+  build: .
+  environment:
+    ID: Amazon Access ID
+    KEY: Amazon Access Key
+    FROM: somewhere@example.com
