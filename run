@@ -10,8 +10,8 @@ hostname > /etc/mailname
 postconf -e "myhostname = `hostname`"
 postconf -e "mynetworks = ENV_NETWORKS"
 
-RUN postconf -e 'relayhost = $(SES_ENDPOINT):587'
-echo "$(SES_ENDPOINT):587 $ID:$KEY" > /etc/postfix/sasl-passwords
+postconf -e "relayhost = ${SES_ENDPOINT}:587"
+echo "${SES_ENDPOINT}:587 $ID:$KEY" > /etc/postfix/sasl-passwords
 postmap hash:/etc/postfix/sasl-passwords
 
 if [ -n "${FROM:-}" ] ; then
