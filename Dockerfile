@@ -27,23 +27,21 @@ RUN apt-get update
 
 RUN ln -sf /usr/share/zoneinfo/posixrules  /etc/localtime
 
-RUN apt-get -y install ca-certificates
-
 # For testing our mail configuration, try "date | mail -s testing
 #  user@example.com"
 
-RUN apt-get -y install mailutils telnet psmisc
+RUN apt-get -y install ca-certificates mailutils telnet psmisc
 
 # Most of the postscript configuration.  The parts that are dependent
 #  on environment variables are actually in the 'run' script
 
-RUN postconf -e 'smtp_sasl_auth_enable = yes'
-RUN postconf -e 'smtp_sasl_password_maps = hash:/etc/postfix/sasl-passwords'
-RUN postconf -e 'smtp_sasl_security_options = noanonymous'
-RUN postconf -e 'smtp_use_tls = yes'
-RUN postconf -e 'smtp_tls_security_level = encrypt'
-RUN postconf -e 'smtp_tls_note_starttls_offer = yes'
-RUN postconf -e 'smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt'
+RUN postconf -e 'smtp_sasl_auth_enable = yes' ;\
+    postconf -e 'smtp_sasl_password_maps = hash:/etc/postfix/sasl-passwords' ;\
+    postconf -e 'smtp_sasl_security_options = noanonymous' ;\
+    postconf -e 'smtp_use_tls = yes' ;\
+    postconf -e 'smtp_tls_security_level = encrypt' ;\
+    postconf -e 'smtp_tls_note_starttls_offer = yes' ;\
+    postconf -e 'smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt'
 
 EXPOSE 25
 
