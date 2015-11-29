@@ -48,6 +48,7 @@ RUN postconf -e 'smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt'
 EXPOSE 25
 
 COPY run /root/run
+RUN chmod +x /root/run
 CMD /root/run
 
 
