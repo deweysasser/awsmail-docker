@@ -33,3 +33,18 @@ The following environment variables are used at runtime to configure postfix.
 	 is not a valid domain, Amazon will bounce the email.
 * SES_ENDPOINT -- (defaults to endpoing for us-east-1) Name of Amazon
 	     SES enpoint
+
+
+
+Troubleshooting
+---------------
+
+AWS is picky about mail it receives.  
+
+* It requires that the sending hostname be valid (RFC1123 2.1)
+
+The following must all be verified addresses (or SES must be in production mode):
+
+* The envelope "FROM" address
+* The envelope "TO" address
+* The in-text email addresses
