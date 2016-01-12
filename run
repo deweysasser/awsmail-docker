@@ -8,7 +8,7 @@ set -u
 hostname > /etc/mailname
 
 postconf -e "myhostname = `hostname`"
-postconf -e "mynetworks = ENV_NETWORKS"
+postconf -e "mynetworks = ${NETWORKS:-0.0.0.0/0}"
 
 postconf -e "relayhost = ${SES_ENDPOINT}:587"
 echo "${SES_ENDPOINT}:587 $ID:$KEY" > /etc/postfix/sasl-passwords
