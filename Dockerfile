@@ -23,6 +23,13 @@ ENV SES_ENDPOINT email-smtp.us-east-1.amazonaws.com
 
 RUN apt-get update
 
+# Install the dumb-init process to make a reasonable PID1
+
+ADD https://github.com/Yelp/dumb-init/releases/download/v1.0.0/dumb-init_1.0.0_amd64 /usr/local/bin/dumb-init
+
+# Be paranoid about making sure this binary is the 'official' release.
+RUN echo 52f9f8ae014cc00021d5563738a83551e101a16ff6fb6e94ab71fbe8c7403631  /usr/local/bin/dumb-init | sha256sum -c - && chmod +x /usr/local/bin/dumb-init
+
 # Set our system into the proper timezone, for convenience
 
 RUN ln -sf /usr/share/zoneinfo/posixrules  /etc/localtime
@@ -47,6 +54,6 @@ EXPOSE 25
 
 COPY run /root/run
 RUN chmod +x /root/run
-CMD /root/run
+CMD /usr/local/bin/dumb-init /root/run
 
 
