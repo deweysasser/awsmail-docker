@@ -5,29 +5,43 @@
 set -e
 set -u
 
-hostname > /etc/mailname
+flag=/var/run/awsmail.configured.flag
 
-postconf -e "myhostname = `hostname`"
-postconf -e "mynetworks = ${NETWORKS:-0.0.0.0/0}"
+configure() {
+    hostname > /etc/mailname
+    
+    postconf -e "myhostname = `hostname`"
+    postconf -e "mynetworks = ${NETWORKS:-0.0.0.0/0}"
+    
+    postconf -e "relayhost = ${SES_ENDPOINT}:587"
+    echo "${SES_ENDPOINT}:587 $ID:$KEY" > /etc/postfix/sasl-passwords
+    postmap hash:/etc/postfix/sasl-passwords
+    
+    if [ -n "${FROM:-}" ] ; then
+	echo "/.*/ ${FROM}" > /etc/postfix/generic
+	postmap hash:/etc/postfix/generic
+	postconf -e 'smtp_generic_maps = hash:/etc/postfix/generic'
+	postconf -e 'canonical_maps = regexp:/etc/postfix/generic'
+	postconf -e 'canonical_classes = envelope_sender'
+    fi
+}
 
-postconf -e "relayhost = ${SES_ENDPOINT}:587"
-echo "${SES_ENDPOINT}:587 $ID:$KEY" > /etc/postfix/sasl-passwords
-postmap hash:/etc/postfix/sasl-passwords
 
-if [ -n "${FROM:-}" ] ; then
-    echo "/.*/ $FROM" > /etc/postfix/generic
-    postmap hash:/etc/postfix/generic
-    postconf -e 'smtp_generic_maps = hash:/etc/postfix/generic'
-    postconf -e 'canonical_maps = regexp:/etc/postfix/generic'
-    postconf -e 'canonical_classes = envelope_sender'
+start() {
+    service rsyslog start
+    service cron start
+    service postfix start
+}
+
+
+if [ ! -f $flag ] ; then
+    configure
 fi
 
 # Do we need to configure arbitrary files?
 #perl -i -p -e 's/ENV_(\w)+/$ENV{$1}/g' 
 
-service rsyslog start
-service cron start
-service postfix start
+start
 
 if [ -n "$*" ] ; then
     eval "$@"
