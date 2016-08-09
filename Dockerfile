@@ -1,4 +1,4 @@
-FROM ubuntu:trusty
+FROM debian:jessie
 MAINTAINER Dewey Sasser <dewey@sasser.com>
 
 ######################################################################
@@ -21,8 +21,6 @@ ENV SES_ENDPOINT email-smtp.us-east-1.amazonaws.com
 # End configuration
 ######################################################################
 
-RUN apt-get update
-
 # Install the dumb-init process to make a reasonable PID1
 
 ADD https://github.com/Yelp/dumb-init/releases/download/v1.0.0/dumb-init_1.0.0_amd64 /usr/local/bin/dumb-init
@@ -37,7 +35,9 @@ RUN ln -sf /usr/share/zoneinfo/posixrules  /etc/localtime
 # For testing our mail configuration, try "date | mail -s testing
 #  user@example.com"
 
-RUN apt-get -y install ca-certificates mailutils telnet psmisc
+RUN apt-get update
+
+RUN apt-get -y install postfix ca-certificates mailutils telnet psmisc rsyslog
 
 # Most of the postscript configuration.  The parts that are dependent
 #  on environment variables are actually in the 'run' script
