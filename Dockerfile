@@ -23,14 +23,13 @@ RUN echo 52f9f8ae014cc00021d5563738a83551e101a16ff6fb6e94ab71fbe8c7403631  /usr/
 ENV NETWORKS 127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16
 
 # AWS credentials
-ENV ID "put your aws ID here"
-ENV KEY "put your aws secret here"
+ENV ID="put your aws ID here"  KEY="put your aws secret here"
 
 # This is a from address used when there is no valid one
 ENV FROM "root@example.com"
 
 # We'll default to the us-east mail endpoint.  Feel free to substitute your own
-ENV SES_ENDPOINT email-smtp.us-east-1.amazonaws.com
+ENV SES_ENDPOINT=email-smtp.us-east-1.amazonaws.com  SMTP_PORT=587
 
 # End configuration
 ######################################################################
@@ -59,5 +58,3 @@ EXPOSE 25
 COPY run /root/run
 RUN chmod +x /root/run
 CMD /usr/local/bin/dumb-init /root/run
-
-
