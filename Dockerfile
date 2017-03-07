@@ -54,6 +54,7 @@ RUN postconf -e 'smtp_sasl_auth_enable = yes' ;\
     postconf -e 'smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt'
 
 EXPOSE 25
+VOLUME /var/spool/postfix
 
 COPY run /root/run
 RUN chmod +x /root/run
