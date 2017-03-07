@@ -3,6 +3,8 @@
 # The default target -- other makefiles will add dependencies
 all::
 
+include project.mk
+
 # Local variable overrides
 -include local.mk
 
@@ -23,4 +25,4 @@ include makefiles/external-state.mk
 
 # AWS docker magic
 include makefiles/docker.mk
-include makefiles/aws-ecr.mk
+
