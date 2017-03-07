@@ -2,6 +2,20 @@ FROM debian:jessie
 MAINTAINER Dewey Sasser <dewey@sasser.com>
 
 ######################################################################
+# Base Packages
+RUN apt-get update
+RUN apt-get -y install postfix ca-certificates mailutils telnet psmisc rsyslog
+
+# Install the dumb-init process to make a reasonable PID1
+ADD https://github.com/Yelp/dumb-init/releases/download/v1.0.0/dumb-init_1.0.0_amd64 /usr/local/bin/dumb-init
+
+# Be paranoid about making sure this binary is the 'official' release.
+RUN echo 52f9f8ae014cc00021d5563738a83551e101a16ff6fb6e94ab71fbe8c7403631  /usr/local/bin/dumb-init \
+    | sha256sum -c - && chmod +x /usr/local/bin/dumb-init
+
+
+
+######################################################################
 # Configuration Section
 
 # Allow mail from all private addresses by default for easy setup
@@ -21,13 +35,6 @@ ENV SES_ENDPOINT email-smtp.us-east-1.amazonaws.com
 # End configuration
 ######################################################################
 
-# Install the dumb-init process to make a reasonable PID1
-
-ADD https://github.com/Yelp/dumb-init/releases/download/v1.0.0/dumb-init_1.0.0_amd64 /usr/local/bin/dumb-init
-
-# Be paranoid about making sure this binary is the 'official' release.
-RUN echo 52f9f8ae014cc00021d5563738a83551e101a16ff6fb6e94ab71fbe8c7403631  /usr/local/bin/dumb-init | sha256sum -c - && chmod +x /usr/local/bin/dumb-init
-
 # Set our system into the proper timezone, for convenience
 
 RUN ln -sf /usr/share/zoneinfo/posixrules  /etc/localtime
@@ -35,9 +42,6 @@ RUN ln -sf /usr/share/zoneinfo/posixrules  /etc/localtime
 # For testing our mail configuration, try "date | mail -s testing
 #  user@example.com"
 
-RUN apt-get update
-
-RUN apt-get -y install postfix ca-certificates mailutils telnet psmisc rsyslog
 
 # Most of the postscript configuration.  The parts that are dependent
 #  on environment variables are actually in the 'run' script
