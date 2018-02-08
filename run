@@ -10,7 +10,7 @@ flag=/var/run/awsmail.configured.flag
 configure() {
     hostname > /etc/mailname
     
-    postconf -e "myhostname = `hostname`"
+    postconf -e "myhostname = ${HOSTNAME:-`hostname`}"
     postconf -e "mynetworks = ${NETWORKS:-0.0.0.0/0}"
     
     postconf -e "relayhost = ${SES_ENDPOINT}:${SMTP_PORT}"
