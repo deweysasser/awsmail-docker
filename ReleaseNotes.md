@@ -1,3 +1,16 @@
+Release 1.1
+============
+
+* Change line endings
+
+* Allow HOSTNAME environment variable to override container hostname.
+
+* Specify mail spool as external volume
+
+* Allow override of AWS SMTP port
+
+* Reorganize the docker file for better caching
+
 Release 1.0
 ============
 
