@@ -10,11 +10,11 @@ flag=/var/run/awsmail.configured.flag
 configure() {
     hostname > /etc/mailname
     
-    postconf -e "myhostname = `hostname`"
+    postconf -e "myhostname = ${HOSTNAME:-`hostname`}"
     postconf -e "mynetworks = ${NETWORKS:-0.0.0.0/0}"
     
-    postconf -e "relayhost = ${SES_ENDPOINT}:587"
-    echo "${SES_ENDPOINT}:587 $ID:$KEY" > /etc/postfix/sasl-passwords
+    postconf -e "relayhost = ${SES_ENDPOINT}:${SMTP_PORT}"
+    echo "${SES_ENDPOINT}:${SMTP_PORT} $ID:$KEY" > /etc/postfix/sasl-passwords
     postmap hash:/etc/postfix/sasl-passwords
     
     if [ -n "${FROM:-}" ] ; then
