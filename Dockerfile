@@ -1,5 +1,5 @@
 FROM debian:jessie
-MAINTAINER Dewey Sasser <dewey@sasser.com>
+MAINTAINER Dewey Sasser <dewey@deweysasser.com>
 
 ######################################################################
 # Base Packages

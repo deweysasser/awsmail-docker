@@ -6,7 +6,7 @@ Postfix server configured to send mail to amazon.  Just add keys.
 Usage
 -----
 
-Create the curent docker host as a mail relay host
+Create the current docker host as a mail relay host
 
      docker run -d --name mail -p 25:25 -e ID=myid -e KEY=mykey FROM=me@mydomain.com deweysasser/awsmail
 
